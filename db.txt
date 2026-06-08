@@ -1,0 +1,53 @@
+-- Create Users Table (for Admin and User roles)
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(50) NOT NULL, -- Plain text for simplicity
+    role ENUM('admin', 'user') DEFAULT 'user'
+);
+
+-- Create Service Types Table
+CREATE TABLE service_types (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL
+);
+
+-- Create Cars Table
+CREATE TABLE cars (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    brand VARCHAR(50),
+    model VARCHAR(50),
+    license_plate VARCHAR(20),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Create Transactions Table
+CREATE TABLE transactions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    car_id INT,
+    service_id INT,
+    status ENUM('pending', 'in_progress', 'completed') DEFAULT 'pending',
+    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (car_id) REFERENCES cars(id),
+    FOREIGN KEY (service_id) REFERENCES service_types(id)
+);
+
+-- Insert Minimum Dummy Data
+INSERT INTO users (username, password, role) VALUES 
+('admin', 'admin123', 'admin'),
+('john_doe', 'user123', 'user');
+
+INSERT INTO service_types (name, price) VALUES 
+('Engine Repair', 150.00),
+('Brake Repair', 80.00),
+('Tire Change', 50.00);
+
+INSERT INTO cars (user_id, brand, model, license_plate) VALUES 
+(2, 'Toyota', 'Camry', 'B 1234 XYZ');
+
+INSERT INTO transactions (user_id, car_id, service_id, status) VALUES 
+(2, 1, 2, 'pending');
